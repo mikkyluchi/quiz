@@ -1,119 +1,221 @@
-# Lumen with JWT Authentication
-Basically this is a starter kit for you to integrate Lumen with [JWT Authentication](https://jwt.io/).
-If you want to Lumen + Dingo + JWT for your current application, please check [here](https://github.com/krisanalfa/lumen-dingo-adapter).
+# Solution
+- The solution will be a client server model
+  - The client being the mobile app where the users interract with the system
+  - The client will be able able to perform all the task necessary from any of the interfaces that are provided
+  - The server will house all the necesary business logic and data store necessary for the solution
+  - The server responds to the requests from the client
 
-## What's Added
+## Architecture
 
-- [Lumen 5.4](https://github.com/laravel/lumen/tree/v5.4.0).
-- [JWT Auth](https://github.com/tymondesigns/jwt-auth) for Lumen Application. <sup>[1]</sup>
-- [Dingo](https://github.com/dingo/api) to easily and quickly build your own API. <sup>[1]</sup>
-- [Lumen Generator](https://github.com/flipboxstudio/lumen-generator) to make development even easier and faster.
-- [CORS and Preflight Request](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS) support.
 
-> [1] Added via [this package](https://packagist.org/packages/krisanalfa/lumen-dingo-adapter).
 
-## Quick Start
+## Schema
 
-- Clone this repo or download it's release archive and extract it somewhere
-- You may delete `.git` folder if you get this code via `git clone`
-- Run `composer install`
-- Run `php artisan jwt:generate`
-- Configure your `.env` file for authenticating via database
-- Set the `API_PREFIX` parameter in your .env file (usually `api`).
-- Run `php artisan migrate --seed`
+- users
+  - questions
+  - answers
+  - attempts
+  - options
 
-## A Live PoC
+  - users
+    - Attributes
+      - id { number,required }
+      - email { string,required }
+      - password { string,required }
+      - name { string,required }
+      - profile_photo { string }
+      - remember_token {string}
+      - facebook_id { string }
+      - created_at { date }
+      - updated_at { date }
+  - questions
+    - Attributes
+      - id { number,required }
+      - question { string,required }
+      - created_at { date }
+      - updated_at { date }
+  - options
+    - Attributes
+      - id { number,required }
+      - question_id { number,required }
+      - answer { string,required }
+      - is_correct_answer { boolean, required }
+      - created_at { date }
+      - updated_at { date }
+  - attempts
+    - Attributes
+      - id { number,required }
+      - user_id { number,required }
+      - time_started { date,required }
+      - time_ended { date,required }
+      - duration { number }
+      - score { number }
+      - total_questions { number }
+      - total_correct { number }
+      - total_wrong { number }
+      - created_at { date }
+      - updated_at { date }
+  - answers
+    - Attributes
+      - id { number,required }
+      - user_id { number,required }
+      - attempt_id { number, required }
+      - question_id { number,required }
+      - answer_id { number,required }
+      - score { boolean,required }
+      - created_at { date }
+      - updated_at { date }
 
-- Run a PHP built in server from your root project:
+## EndPoints
 
-```sh
-php -S localhost:8000 -t public/
-```
+Base Url - https://api.invoice.ng/api
+Sign Up
+  - url /auth/signup
+  - POST
+  - $request = [
+        'headers' => ['Content-Type: application/json'],    
+        'url' => '/signup',
+        'params' => json_encode([
+            'email'     => 'john@doe.com',
+            'password'     => 'abx123xyz',
+            'fullname'  => 'John Doe'
+        ])
+    ];
+  - $response - 200 OK = {
+          "status": true,
+          "message": "User created",
+          "data": {
+            "userId": 1,
+            "email": "john@doe.com",
+            "fullName": "John Doe"
+            "dateCreated": "2016-03-29T20:03:09.584Z",
+            "dateModified": "2016-03-29T20:03:09.584Z",
+            "profilePhoto": "",
+            "facebookId": "" 
+          }
+        }
 
-Or via artisan command:
-
-```sh
-php artisan serve
-```
-
-To authenticate a user, make a `POST` request to `/api/auth/login` with parameter as mentioned below:
-
-```
-email: johndoe@example.com
-password: johndoe
-```
-
-Request:
-
-```sh
-curl -X POST -F "email=johndoe@example.com" -F "password=johndoe" "http://localhost:8000/api/auth/login"
-```
-
-Response:
-
-```
-{
-  "success": {
-    "message": "token_generated",
-    "token": "a_long_token_appears_here"
+Sign In
+  - url /auth/login
+  - POST
+  - $request = [
+        'headers' => ['Content-Type: application/json'],    
+        'url' => '/signin',
+        'params' => json_encode([
+            'email'     => 'john@doe.com',
+            'password'     => 'abx123xyz'
+        ])
+    ];
+  - $response - 200 OK = {
+      "status":"success",
+      "message":"User authenticated",
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjYzLCJpc3MiOiJodHRwczpcL1wvYXBpLmludm9pY2UubmdcL2F1dGhlbnRpY2F0ZSIsImlhdCI6MTQ5Nzg3NDU4NCwiZXhwIjoxNDk3ODgxNzg0LCJuYmYiOjE0OTc4NzQ1ODQsImp0aSI6InVOajVIN05VbmtkZm1GN2MifQ.lqzV8n71xBtkTqi4jjup4_lpEEn-RYsdLSL0S_EGots",
+        "type": "bearer",
+        "expiry": 1497881784,
+      "data": {
+            "userId": 1,
+            "email": "john@doe.com",
+            "fullName": "John Doe"
+            "dateCreated": "2016-03-29T20:03:09.584Z",
+            "dateModified": "2016-03-29T20:03:09.584Z",
+            "profilePhoto": "",
+            "facebookId": "" 
+          }
   }
-}
-```
 
-- With token provided by above request, you can check authenticated user by sending a `GET` request to: `/api/auth/user`.
+Facebook
+  - url /facebook
+  - POST
+  - $request = [
+        'headers' => ['Content-Type: application/json'],    
+        'url' => '/signin',
+        'params' => json_encode([
+            'facebook_id'     => 'john@doe.com',
+            'email'     => 'abx123xyz',
+            'name'     => 'abx123xyz',
+            'profile_photo' => ''
+        ])
+    ];
+  - $response - 200 OK = {
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjYzLCJpc3MiOiJodHRwczpcL1wvYXBpLmludm9pY2UubmdcL2F1dGhlbnRpY2F0ZSIsImlhdCI6MTQ5Nzg3NDU4NCwiZXhwIjoxNDk3ODgxNzg0LCJuYmYiOjE0OTc4NzQ1ODQsImp0aSI6InVOajVIN05VbmtkZm1GN2MifQ.lqzV8n71xBtkTqi4jjup4_lpEEn-RYsdLSL0S_EGots",
+        "type": "bearer",
+        "expiry": 1497881784
+  }
 
-Request:
-
-```sh
-curl -X GET -H "Authorization: Bearer a_long_token_appears_here" "http://localhost:8000/api/auth/user"
-```
-
-Response:
-
-```
-{
-  "success": {
-    "user": {
-      "id": 1,
-      "name": "John Doe",
-      "email": "johndoe@example.com",
-      "created_at": null,
-      "updated_at": null
+Questions
+  - url /quiz/questions
+  - GET
+  
+  - $response - 200 OK = {
+        "status": "success",
+        "data": [
+            {
+                "id": "787714923851009",
+                "question": "Who is the president of Nigeria", 
+                "dateModified": "2017-06-06 11:11:07"
+                "options":[
+                  {
+                    "id": "1",
+                    "answer": "Goodluck Ebele Jonathan",
+                    
+                },
+                {
+                    "id": "2",
+                    "answer": "M Buhari",
+                    
+                },
+                ...
+                ]
+            },
+            ...
+        ]
     }
-  }
-}
-```
 
-- To refresh your token, simply send a `PATCH` request to `/api/auth/refresh`.
-- Last but not least, you can also invalidate token by sending a `DELETE` request to `/api/auth/invalidate`.
-- To list all registered routes inside your application, you may execute `php artisan route:list`
-
-```
-⇒  php artisan route:list
-+--------+----------------------+---------------------+------------------------------------------+------------------+------------+
-| Verb   | Path                 | NamedRoute          | Controller                               | Action           | Middleware |
-+--------+----------------------+---------------------+------------------------------------------+------------------+------------+
-| POST   | /api/auth/login      | api.auth.login      | App\Http\Controllers\Auth\AuthController | postLogin        |            |
-| GET    | /api                 | api.index           | App\Http\Controllers\APIController       | getIndex         | jwt.auth   |
-| GET    | /api/auth/user       | api.auth.user       | App\Http\Controllers\Auth\AuthController | getUser          | jwt.auth   |
-| PATCH  | /api/auth/refresh    | api.auth.refresh    | App\Http\Controllers\Auth\AuthController | patchRefresh     | jwt.auth   |
-| DELETE | /api/auth/invalidate | api.auth.invalidate | App\Http\Controllers\Auth\AuthController | deleteInvalidate | jwt.auth   |
-+--------+----------------------+---------------------+------------------------------------------+------------------+------------+
-```
-
-## ETC
-
-I made a Postman collection [here](https://www.getpostman.com/collections/1090b93eaa1ece4b09f2).
-
-## License
-
-```
-Laravel and Lumen is a trademark of Taylor Otwell
-Sean Tymon officially holds "Laravel JWT" license
-```
-
-## Donation
-
-If this project help you reduce time to develop, you can give me a cup of coffee :) 
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=krisan47%40gmail%2ecom&lc=ID&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted)
+Submit
+  - url /quiz/submit
+  - POST
+  - $request = [
+        'headers' => ['Content-Type: application/json'],    
+        'url' => '/quiz/submit',
+        'params' => json_encode([
+          "time_started"=>"2018-01-01 00:00",
+            "time_ended"=>"2018-01-02 01:20",  
+            'questions'=>[
+              [
+                "id"=>1,
+                "option_id"=>1
+              ],
+              ...
+            ]
+            
+        ])
+    ];
+  - $response - 200 OK = {
+        "status": "success",
+        "message": "Quiz finished",
+         "data": {
+              "time_started": "2018-01-01 00:00",
+              "time_ended": "2018-01-02 01:20",
+              "duration": 1520,
+              "total_questions": 1,
+              "user_id": 15,
+              "updated_at": "2018-02-01 07:11:02",
+              "created_at": "2018-02-01 07:11:02",
+              "id": 26,
+              "score": 0,
+              "total_correct": 0,
+              "total_wrong": 1,
+              "answer": [
+                  {
+                      "id": 3,
+                      "user_id": 15,
+                      "attempt_id": 26,
+                      "question_id": 1,
+                      "option_id": 1,
+                      "is_correct": 0,
+                      "created_at": "2018-02-01 07:11:02",
+                      "updated_at": "2018-02-01 07:11:02"
+                  }
+              ]
+          }
+    }
