@@ -36,13 +36,15 @@ class AuthController extends Controller
             return new JsonResponse(array(
                 "status"=>"failed",
                 "message"=>$e->getResponse()->original
-            ), Response::HTTP_UNAUTHORIZED);
+            ), Response::HTTP_OK);
             
         }
         
         //check if the facebook_id
         $user = User::whereFacebookId($request['facebook_id'])->first();
         if($user){
+
+            
 
         }else{
 
@@ -59,7 +61,7 @@ class AuthController extends Controller
                     'email' => $request['email'],
                     'password' => $hashedpassword,
                     'facebook_id' => $request['facebook_id'],
-                    'profile_photo' => $request['profile_photo'],
+                    'profile_photo' => $request['photo'],
                 ));
                 if($user){
 
@@ -84,7 +86,7 @@ class AuthController extends Controller
                     return new JsonResponse(array(
                         "status"=>"failed",
                         "message"=>"Unable to create user"
-                    ), Response::HTTP_UNAUTHORIZED);
+                    ), Response::HTTP_OK);
                 } 
             }
             
@@ -112,7 +114,7 @@ class AuthController extends Controller
             return new JsonResponse(array(
                 "status"=>"failed",
                 "message"=>$e->getResponse()->original
-            ), Response::HTTP_UNAUTHORIZED);
+            ), Response::HTTP_OK);
             
         }
         
@@ -145,7 +147,7 @@ class AuthController extends Controller
             return new JsonResponse(array(
                 "status"=>"failed",
                 "message"=>$e->getResponse()->original
-            ), Response::HTTP_UNAUTHORIZED);
+            ), Response::HTTP_OK);
 
         }
         //$hashedpassword = (new BcryptHasher)->make($request['password']);
@@ -177,7 +179,7 @@ class AuthController extends Controller
             return new JsonResponse(array(
                 "status"=>"failed",
                 "message"=>"Unable to create user"
-            ), Response::HTTP_UNAUTHORIZED);
+            ), Response::HTTP_OK);
         } 
     }
     /**
@@ -190,7 +192,7 @@ class AuthController extends Controller
         return new JsonResponse(array(
             'status' =>'failed',
             'message' => 'Unable to validate user'
-        ), Response::HTTP_UNAUTHORIZED);
+        ), Response::HTTP_OK);
     }
     
     /**
@@ -203,7 +205,7 @@ class AuthController extends Controller
         return new JsonResponse(array(
             'status'=>'failed',
             'message' => 'Unable to authorize user'
-        ), Response::HTTP_INTERNAL_SERVER_ERROR);
+        ), Response::HTTP_OK);
     }
     
     /**

@@ -48,13 +48,13 @@ class QuizController extends Controller
 	            
 	        }
 	        //save the attempt
-	        $duration = $this->getTestDuration($request['time_started'],$request['time_ended']);
+	        $duration = $this->getTestDuration(date("Y-m-d H:i",strtotime($request['time_started'])),date("Y-m-d H:i",strtotime($request['time_ended'])));
 
 	        $attempt = Auth::user()->attempt()->Create([
 	        	'time_started'=>$request['time_started'],
 	        	'time_ended'=>$request['time_ended'],
 		        'duration'=>$duration, 
-		        'total_questions'=>sizeof($request['questions'])
+		        'total_questions'=>sizeof($request['questions'])-1
 	        ]);
 	        
 	        $score = 0;
@@ -62,7 +62,10 @@ class QuizController extends Controller
 	        $total_wrong = 0;
 	        //validation successfull
 	        if(!empty($request['questions'])){
-	        	foreach($request['questions'] as $question){
+
+	        	foreach($request['questions'] as $key=>$question){
+	        		if($key==0)
+	        		continue;
 	        		$answer = Answer::create([
 		        		'user_id'=>$user->id,
 				        'attempt_id'=>$attempt->id,

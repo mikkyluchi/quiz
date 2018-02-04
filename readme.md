@@ -7,7 +7,9 @@
 
 ## Architecture
 
-
+PHP Application - Laravel Application
+Apache
+MySQL Database
 
 ## Schema
 
@@ -81,7 +83,9 @@ Sign Up
             'fullname'  => 'John Doe'
         ])
     ];
-  - $response - 200 OK = {
+  - $response - 200 OK
+```
+{
           "status": true,
           "message": "User created",
           "data": {
@@ -94,6 +98,7 @@ Sign Up
             "facebookId": "" 
           }
         }
+```
 
 Sign In
   - url /auth/login
@@ -106,7 +111,9 @@ Sign In
             'password'     => 'abx123xyz'
         ])
     ];
-  - $response - 200 OK = {
+  - $response - 200 OK = 
+```
+{
       "status":"success",
       "message":"User authenticated",
         "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjYzLCJpc3MiOiJodHRwczpcL1wvYXBpLmludm9pY2UubmdcL2F1dGhlbnRpY2F0ZSIsImlhdCI6MTQ5Nzg3NDU4NCwiZXhwIjoxNDk3ODgxNzg0LCJuYmYiOjE0OTc4NzQ1ODQsImp0aSI6InVOajVIN05VbmtkZm1GN2MifQ.lqzV8n71xBtkTqi4jjup4_lpEEn-RYsdLSL0S_EGots",
@@ -122,6 +129,7 @@ Sign In
             "facebookId": "" 
           }
   }
+```
 
 Facebook
   - url /facebook
@@ -136,17 +144,22 @@ Facebook
             'profile_photo' => ''
         ])
     ];
-  - $response - 200 OK = {
+  - $response - 200 OK = 
+```
+{
         "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjYzLCJpc3MiOiJodHRwczpcL1wvYXBpLmludm9pY2UubmdcL2F1dGhlbnRpY2F0ZSIsImlhdCI6MTQ5Nzg3NDU4NCwiZXhwIjoxNDk3ODgxNzg0LCJuYmYiOjE0OTc4NzQ1ODQsImp0aSI6InVOajVIN05VbmtkZm1GN2MifQ.lqzV8n71xBtkTqi4jjup4_lpEEn-RYsdLSL0S_EGots",
         "type": "bearer",
         "expiry": 1497881784
   }
+```
 
 Questions
   - url /quiz/questions
   - GET
   
-  - $response - 200 OK = {
+  - $response - 200 OK = 
+```
+{
         "status": "success",
         "data": [
             {
@@ -170,6 +183,7 @@ Questions
             ...
         ]
     }
+```
 
 Submit
   - url /quiz/submit
@@ -190,7 +204,9 @@ Submit
             
         ])
     ];
-  - $response - 200 OK = {
+  - $response - 200 OK = 
+```
+{
         "status": "success",
         "message": "Quiz finished",
          "data": {
@@ -219,3 +235,22 @@ Submit
               ]
           }
     }
+```
+## How To Run
+- Run a PHP built in server from your root project:
+
+```sh
+php -S localhost:8000 -t public/
+```
+
+```sh
+- Create a database
+- Change the database details in the .env file
+- Execute the command below in the root project
+php artisan migrate - to create your database
+
+```
+
+```sh
+Test Url - quiz.mithel-ouriel.net.ng
+```
